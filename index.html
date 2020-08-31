@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<link rel="stylesheet" href="bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+<style type="text/css">
+	.error{
+		color: red;
+	}
+</style>
+<body ng-app="formExample">
+<header>
+	<ul>
+		<li><a href="#/!">Home</a></li>
+	<li><a href="#!about">About</a></li>
+</ul>
+</header>
+<div ng-view></div>
+<div class="container-fluid" ng-controller="ExampleController">
+	<div style="padding: 20px 0" class="col-md-8">
+   <form  class="simple-form" name="customform" novalidate>
+
+<p>    <label>Custoemer Name:</label><br />
+     <input ng-change="validation()" type="text" name="cusName" ng-model="users.cusName" maxlength="5" />
+     <span class="error" ng-show="customform.cusName.$error.notempty">Required</span>
+    <span class="error" ng-show=" customform.cusName.$error.maxLength">Max length is 5</span>
+   	 <!-- <span class="error" ng-show="customform.cusName.$error.required">Username is required</span> -->
+       </p>
+      
+
+     <p> <label>poDetails:</label><br />
+     <input type="text" name="poDetails" ng-model="users.poDetails"  required="true" />
+   	 <span class="error" ng-show="customform.poDetails.$error.required">poDetails is required</span>
+       </p>
+       <p>    <label>Remarks:</label><br />
+     <input type="text" name="Remarks" ng-model="users.Remarks"  required="true" />
+   	 <span class="error" ng-show="customform.Remarks.$error.required">Remarks is required</span>
+       </p>
+       <p>    <label>email:</label><br />
+       	 <!-- <input type="email" name="input" ng-model="users.email" required> -->
+     <input type="email" name="email" ng-model="users.email" required=""  />
+   	 <span  class="error" ng-show="customform.email.$error.required">
+        Required!</span>
+      <span class="error" ng-show="customform.email.$error.email">
+        Not valid email!</span>
+       </p>
+       <p>    <label>Phone:</label><br />
+     <input type="text" name="Phone" ng-model="users.phone" restrict-to="[0-9]" maxlength="10"  />
+   	 <span class="error" ng-show="customform.Phone.$invalid">Not valid</span>
+       </p>
+    
+
+    <button class="btn btn-primary" type="button" ng-click="reset()" value="Reset" />Reset</button>
+    <button class="btn btn-primary" type="submit" ng-click="update(users)" value="Save" ng-disabled="customform.$invalid" />Save</button>
+  </form> 
+
+  <ul><li ng-repeat="file in arrsss  track by $index">
+  	{{file | uppercase }}
+  </li>
+</ul>
+
+<ul>
+  <li ng-repeat="obj in arrObj">
+  {{ obj.name + ', ' + obj.country }}</li>
+</ul>
+
+
+
+  
+  <pre>user = {{users | json}}</pre>
+  <pre>master = {{master | json}}</pre>
+</div>
+</div>
+<script>
+  var app=angular.module('formExample', ["ngRoute"]);
+  app.config(function($routeProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl : "index.html"
+    })
+    .when("/about", {
+        templateUrl : "about.html"
+    });
+});
+    app.controller('ExampleController', function($scope) {
+    	$scope.users={
+    	   "cusName":"John",
+    	   "poDetails":30,
+    	   "Remarks":"remaks",
+    	   "email":"John",
+    	   "phone":30,
+    	  
+    	};
+
+    	$scope.arrsss=["file1","file2","file2"];
+    	$scope.arrObj=[
+{name:'gobi',country:'Ind'},
+{name:'rah',country:'US'},
+{name:'Kali',country:'Brazil'}];
+    	//$scope.user=$scope.users;
+      $scope.master = {};
+
+      $scope.update = function(users) {
+        $scope.master = angular.copy(users);
+      };
+
+      $scope.reset = function() {
+        $scope.user = angular.copy($scope.master);
+      };
+
+      $scope.reset();
+
+
+      $scope.validation = function () {
+      	
+	
+
+  if ($scope.users.cusName.length === 0) {
+  	
+    /*input is empty*/
+    $scope.customform.cusName.$setValidity("notempty", false);
+     $scope.customform.cusName.$setValidity("maxLength", true);
+    
+  }
+  else if ($scope.users.cusName.length >= 5) {
+  	
+    /*input is empty*/
+    $scope.customform.cusName.$setValidity("maxLength", false);
+    $scope.customform.cusName.$setValidity("notempty", true);
+    
+  }
+  
+}
+
+
+     
+    });
+
+
+
+     angular.module('formExample').directive('restrictTo', function() {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            var re = RegExp(attrs.restrictTo);
+            var exclude = /Backspace|Enter|Tab|Delete|Del|ArrowUp|Up|ArrowDown|Down|ArrowLeft|Left|ArrowRight|Right/;
+
+            element[0].addEventListener('keydown', function(event) {
+                if (!exclude.test(event.key) && !re.test(event.key)) {
+                    event.preventDefault();
+                }
+            });
+        }
+    }
+});
+
+
+
+
+ var text = element(by.binding('users.email'));
+var valid = element(by.binding('customform.email.$valid'));
+var input = element(by.model('users.email'));
+
+it('should initialize to model', function() {
+  expect(text.getText()).toContain('me@example.com');
+  expect(valid.getText()).toContain('true');
+});
+
+it('should be invalid if empty', function() {
+  input.clear();
+  input.sendKeys('');
+  expect(text.getText()).toEqual('text =');
+  expect(valid.getText()).toContain('false');
+});
+
+it('should be invalid if not email', function() {
+  input.clear();
+  input.sendKeys('xxx');
+
+  expect(valid.getText()).toContain('false');
+});
+
+
+
+</script>
+</body>
+</html>
